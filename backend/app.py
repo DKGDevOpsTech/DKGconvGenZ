@@ -11,7 +11,23 @@ from flask_cors import CORS
 from pyaadhaar.decode import AadhaarSecureQr, AadhaarOldQr
 
 app = Flask(__name__)
-CORS(app, origins=["https://abhhealthcare.org"])
+
+
+def get_allowed_origins():
+    configured_origins = os.environ.get('ALLOWED_ORIGINS', '')
+    if configured_origins.strip():
+        return [origin.strip() for origin in configured_origins.split(',') if origin.strip()]
+
+    return [
+        'https://ganotras.in',
+        'https://www.ganotras.in',
+        'https://dkgconvgenz.onrender.com',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ]
+
+
+CORS(app, origins=get_allowed_origins())
 
 
 def read_qr_from_image(image_bytes):

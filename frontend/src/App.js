@@ -1,7 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
-const API_URL = process.env.REACT_APP_API_URL || '';
+const DEFAULT_PROD_API_URL = 'https://dkgconvgenz.onrender.com';
+const isLocalhost =
+  typeof window === 'undefined' ||
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1';
+const API_URL = (
+  process.env.REACT_APP_API_URL ||
+  (isLocalhost ? '' : DEFAULT_PROD_API_URL)
+).replace(/\/$/, '');
+const SERVER_ERROR_MESSAGE = API_URL
+  ? `Could not connect to server at ${API_URL}. Make sure the backend is available.`
+  : 'Could not connect to server. Make sure the backend is running on port 5000.';
 
 const FIELD_LABELS = {
   name: 'Name',
@@ -192,7 +203,7 @@ function CompressPdf() {
 
       setResult({ original, compressed, savings, elapsedMs });
     } catch {
-      setError('Could not connect to server. Make sure the backend is running on port 5000.');
+      setError(SERVER_ERROR_MESSAGE);
     } finally {
       stopTimer();
       setLoading(false);
@@ -378,7 +389,7 @@ function PdfToExcel() {
       URL.revokeObjectURL(url);
       setDone(true);
     } catch {
-      setError('Could not connect to server. Make sure the backend is running on port 5000.');
+      setError(SERVER_ERROR_MESSAGE);
     } finally {
       setLoading(false);
     }
@@ -494,7 +505,7 @@ function PdfToWord() {
       URL.revokeObjectURL(url);
       setDone(true);
     } catch {
-      setError('Could not connect to server. Make sure the backend is running on port 5000.');
+      setError(SERVER_ERROR_MESSAGE);
     } finally {
       setLoading(false);
     }
@@ -600,7 +611,7 @@ function PdfConverter() {
         setPages(json.pages);
       }
     } catch {
-      setError('Could not connect to server. Make sure the backend is running on port 5000.');
+      setError(SERVER_ERROR_MESSAGE);
     } finally {
       setLoading(false);
     }
@@ -1049,8 +1060,8 @@ export default function App() {
     // corner handles
     const hs = 8;
     ctx.fillStyle = '#f6ad55';
-    [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([cx,cy]) => {
-      ctx.fillRect(cx - hs/2, cy - hs/2, hs, hs);
+    [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].forEach(([cx, cy]) => {
+      ctx.fillRect(cx - hs / 2, cy - hs / 2, hs, hs);
     });
   }, [cropSel]);
 
@@ -1138,7 +1149,7 @@ export default function App() {
         setResult(json);
       }
     } catch {
-      setError('Could not connect to server. Make sure the backend is running on port 5000.');
+      setError(SERVER_ERROR_MESSAGE);
     } finally {
       setLoading(false);
     }
